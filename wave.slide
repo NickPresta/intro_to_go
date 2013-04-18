@@ -1,0 +1,325 @@
+# This is a file
+
+Introduction to Go
+
+Nick Presta
+
+* Who
+
+- Rob Pike: Unix, Plan 9
+- Ken Thompson: Unix, Plan 9, C language
+- Robert Griesemer: Java HotSpot VM, V8 JavaScript engine
+- Russ Cox: Plan 9, Google Code Search
+- Brad Fitzpatrick: Memcached, OpenID, LiveJournal
+- Other awesome contributors, library authors, and enthusiasts
+
+* Why Go
+
+Initially motivated by the needs at Google:
+
+- efficiency
+- safety
+- concurrency
+- scalability
+- fast development cycle
+- no surprises
+
+* What is Go
+
+Go is an open source, general purpose programming language
+
+- compiled
+- garbage-collected
+- statically typed
+- concurrent
+- scalable
+- simple
+- safe
+- productive
+
+* Go 1
+
+- Released March 2012
+- A formal specification of the language/libraries that will be supported for years
+- The guarantee: code written for Go 1 will build and run with Go 1.x
+
+* Who uses Go
+
+- Google (YouTube, dl.google.com, DNS)
+- SoundCloud (Doozer, system communication)
+- Cloudflare (Railgun)
+- Janrain (user management platform)
+- Iron.io (cloud-based message queue)
+- Heroku (coordination of distributed systems)
+- Canonical (systems-level)
+- SmugMug (photo sharing, printing, selling)
+- Apcera, Cloud Foundry (cloud-base app deployment/scalability)
+- bit.ly (link shortener/sharing/analytics)
+- StatHat (platform, stats tracker)
+- many more: [[https://gist.github.com/ungerik/3731476]]
+
+* Hello World 1.0
+
+.play support/hello_world.go
+
+* Standard Library
+
+* Packages
+
+- All Go code lives in packages
+- Packages contain type, function, variable and constant declarations
+- Packages can be as large or as small as you need
+- Visibility is determined by case: `Foo` is exported while `foo` is not
+
+* Exporting
+
+Unlike other languages, there are no `private` or `public` keywords to determine visibility.
+An identifier's name carries its visibility information;
+if the initial character is an upper case letter, the package is exported (public), otherwise, it isn't:
+
+- upper case initial letter: `Foo` is visible to clients of package
+- lower case initial letter `foo` (or `_Foo`): not visible to clients of package
+
+This rule applies to everything - variables, functions, fields... everything.
+
+It is clear when looking at an identifier if it is part of a public API -- no looking up declarations.
+
+* Scope
+
+Go has a very simple and compact scope hierarchy:
+
+- universe: predeclared identifiers, such as `int`, `string`
+- package: all the source files of a package within the same scope
+- file: for package import renamed -- not important in practice
+- function: as usual
+- block: as usual
+
+At any point in your source, you can tell where an identifier has originated.
+
+- `foo` or `Foo` is always defined within the package.
+- `x.Foo` is also clear - find `x` locally, `Foo` belongs to it.
+
+* Packages Galore
+
+Many full-featured standard packages
+
+- zip/tar archives
+- bzip2, DEFLATE, gzip, LZW, zlib compression
+- cryptography: aes, dsa, hmac, rsa, sha1/256/512, tls, x509, etc
+- encodings: base64, binary, csv, json, xml
+- HTML templating
+- complex/big numbers
+- images: jpeg, png, gif, etc
+- net: cgi, fcgi, http, mail, rpc, smtp, etc
+- unicode, strings, text processing
+- many more
+
+* net/http - Hello World 2.0
+
+Go includes a powerful HTTP server and client.
+
+.play support/net_http.go
+
+* encoding/json
+
+It is relatively easy to convert JSON-encoded data into Go structures.
+
+.play support/json_encoding.go /START/,/STOP/
+
+* time
+
+The `time` package provides a representation of time, durations, and counters.
+
+.play support/time.go /START/,/STOP/
+
+* The Basics
+
+* Variables
+
+Variables can be explicitly defined with a name and type, or the type can be inferred.
+
+.play support/variables.go /START/,/STOP/
+
+* Variable Declaration
+
+Go's declaration syntax is little different.
+
+For example, in C:
+
+    int *a, b; // What type is b?
+    int (*fp)(int a, int b); // fp is a pointer to a function
+    int (*fp)(int (*ff)(int x, int y), int b) // pointer to function, with function pointer argument
+
+Go's declarations read *much* better from left to right:
+
+    a, b *int
+    f func(int a, int b) int
+    f func(func(int x, int y) int, int b) int
+
+It is easy to invoke closures, because of this:
+
+    sum := func(a, b int) int { return a+b } (5, 6)
+
+* Functions
+
+Go functions can take zero or more arguments:
+
+.play support/functions_simple.go /START/,/STOP/
+
+Notice the type comes after the variable.
+
+* Functions Continued
+
+Functions can return multiple values and can have variadic arguments:
+
+.play support/functions_variadic.go /START/,/STOP/
+
+* Slices
+
+The equivalent of a Python list/Ruby Array
+
+.play support/slices.go /START/,/STOP/
+
+* Maps
+
+Go has a built-in map type
+
+.play support/maps.go /START/,/STOP/
+
+* Structs and Pointers
+
+- Structs are a collection of fields
+- Indirection through a pointer is transparent
+
+.play support/structs.go /START/,/STOP/
+
+* Methods
+
+You can define methods on struct types.
+The method receiver appears in its own argument list between the `func` keyword and the method name.
+
+.play support/methods.go /START/,/STOP/
+
+* Concurrency
+
+* Goroutines
+
+A goroutine is a lightweight thread managed by the Go runtime.
+Place the keyword `go` in front of any function to start a new goroutine.
+
+.play support/goroutines.go /START/,/STOP/
+
+* Channels
+
+Channels are a typed conduits through which you can send and receive values with the channel operator, `<-`
+
+    ch := make(chan string)
+    ch <- v    // Send v to channel ch.
+    v := <-ch  // Receive from ch, and
+               // assign value to v
+
+(The data flows in the direction of the arrow)
+
+By default, sending and receiving block until the other side is ready.
+This allows goroutines to synchronize without explicit locking or condition variables.
+
+* Channels Cont.
+
+To create a channel, you use the `make` built-in function.
+
+.play support/channels_cont.go /START/,/STOP/
+
+Channel can be buffered -- provide the length as the second argument.
+
+* Range and Close
+
+A sender can close a channel to indicate that no more values will be sent.
+
+.play support/fibonacci.go /START/,/STOP/
+
+* Tooling
+
+* Gotool
+
+Go provides an integrated tool for managing Go source code, called `go`.
+
+- get
+- build
+- install
+- run
+- fmt
+- fix
+- doc
+- test
+
+For example:
+
+    go test myfile.go
+
+* go get
+
+- Downloads and installs packages, along with their dependencies.
+- By far the best package manager I've ever used.
+
+To install a MongoDB driver:
+
+    go get labix.org/v2/mgo
+
+Use it in your code:
+
+    import "labix.org/v2/mgo"
+
+- Works with GitHub, BitBucket, Google Code Hosting, Launchpad or any server that is properly configured.
+
+- *Problem:* Versioning is not yet solved, but there are workarounds
+
+* go build, install, run
+
+Compiles your code into a single binary, but does not install it.
+
+    go build github.com/nickpresta/scribe
+
+- Binary is statically linked: no external dependencies
+- Cross compilation built-in: build on OSX, copy to Linux server, run
+
+The `install` tool does what it sounds like -- it installs your binary.
+The `run` tool builds and runs the main package within your source files.
+
+* go fmt
+
+The `fmt` tool formats Go source code.
+
+    go fmt myfile.go
+
+- replaces the need for external tools like `pep8`, `pyflakes`, etc
+- easy to share code; it all looks the same
+- less time spent on arguing and more time spent on writing code
+
+Rewrite code, `fmt` will figure it out:
+
+    gofmt -r 'a[b:len(a)] -> a[b:]'
+
+* go fix
+
+The `fix` tool will update old code so that it still works.
+
+- before Go 1, APIs changed rapidly -- used `fix` tool to keep code working
+- run on Go source tree -- updated protocol buffer implementation to use getters
+- no need to use something like `2to3` or maintain compatibility libraries like `six`
+
+* Conclusion
+
+* Go at Wave
+
+Can we use Go at Wave? YES!
+
+- isolated services (PDF generator, CSV parser, emailer)
+- frontend to data (dashboard, widgets, etc)
+
+Why Go?
+
+- incredibly simple deployment: build anywhere, `scp` binary and run on target
+- static typing, great tooling makes code safer, easier to test
+- light on resources: no separate app servers, workers, load balancer, etc
+
+* Questions?

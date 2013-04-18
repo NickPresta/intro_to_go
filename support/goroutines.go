@@ -14,8 +14,8 @@ func say(s string) {
 }
 
 func main() {
-	go say("ping")
-	fmt.Println("pong")
+	go say("ping") // Starts immediately, doesn't block
+	fmt.Println("pong") // continues
 	time.Sleep(3 * time.Second)
 }
 // STOP OMIT

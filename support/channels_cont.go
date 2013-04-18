@@ -1,13 +1,17 @@
 package main
 
-import "fmt"
+import ("fmt";"time")
 
 // START OMIT
+func produce(ch chan int) {
+	time.Sleep(3 * time.Second)
+	ch <- 42
+}
+
 func main() {
-	c := make(chan int)
-	c <- 1
-	c <- 2
-	fmt.Println(<-c)
-	fmt.Println(<-c)
+	ch := make(chan int)
+	go produce(ch)
+	fmt.Println("Waiting...")
+	fmt.Println(<-ch)
 }
 // STOP OMIT
