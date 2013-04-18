@@ -198,7 +198,23 @@ Go has a built-in map type
 You can define methods on struct types.
 The method receiver appears in its own argument list between the `func` keyword and the method name.
 
-.play support/methods.go /START/,/STOP/
+#.play support/methods.go /START/,/STOP/
+.play support/area1.go /START/,/STOP/
+
+* Object-oriented
+
+Go support object-oriented programming, but in the way you would expect.
+
+- Go has types and methods, but there is no type hierachry.
+- Go has interfaces
+- produces clean, efficient code
+- interfaces are defined implicitly (by implementing the interface)
+- flexible: you don't need to know details ahead of time
+
+* Interfaces
+
+.play support/area2.go /START/,/STOP/
+
 
 * Concurrency
 
@@ -321,5 +337,14 @@ Why Go?
 - incredibly simple deployment: build anywhere, `scp` binary and run on target
 - static typing, great tooling makes code safer, easier to test
 - light on resources: no separate app servers, workers, load balancer, etc
+
+* Further Reading
+
+- [[http://golang.org/]]
+- [[http://godoc.org/]]: search docs for public projects
+- [[http://tour.golang.org/]]: interactive tutorial
+- [[http://go-lang.cat-v.org/]]: docs, libraries, talks, editor configs, etc
+- [[https://github.com/languages/Go]]: projects using Go
+- [[http://www.golangweekly.com/]]: weekly newsletter
 
 * Questions?
